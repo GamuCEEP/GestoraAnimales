@@ -1,14 +1,24 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package gestoraAnimal.domain;
 
-/**
- *
- * @author Alumno Mañana
- */
+import gestoraAnimal.exceptions.DataTypeNotFound;
+
 public interface Data {
+	
+	public static Data createData(String data) throws DataTypeNotFound{
+		String[] temp = data.split(";",1);
+		Data.Type type = Data.Type.valueOf(temp[0]);
+		String objData = temp[1];
+		switch(type) {
+		case Animal:
+			return new Animal(objData);
+		default:
+			throw new DataTypeNotFound(type+" no es un tipo de objeto reconocido");
+		}
+	}
     
+	
+	public enum Type{
+		Animal
+	}
 }
