@@ -7,6 +7,8 @@ import gestoraAnimal.exceptions.DataReadingException;
 import gestoraAnimal.exceptions.DataWrittingException;
 
 public class AppController {
+	
+	private Data selectedObj; 
 
 	private final IDatabase DB = new TxtDatabase();
 
@@ -14,54 +16,73 @@ public class AppController {
 	 * añadir datos quitar datos buscar datos listar datos seleccionar dato editar
 	 * dato seleccionado
 	 */
-	public void createFile(String fileName) {
+	public boolean createFile(String fileName) {
 		if (DB.exists(fileName))
-			return;
+			return true;
 
 		try {
 			DB.createFile(fileName);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
-	public void addObj(Data obj, String fileName) {
+	public boolean addObj(Data obj, String fileName) {
 		try {
 			DB.write(fileName, obj);
 		} catch (DataWrittingException e) {
-			e.printStackTrace();
+			return false;
 		}
+		return true;
 	}
 
-	public void removeObj(Data obj, String fileName) {
+	public boolean removeObj(Data obj, String fileName) {
 		int index;
 		try {
 			index = DB.search(fileName, obj.toString());
 			DB.remove(fileName, index);
+			return true;
 		} catch (DataReadingException e1) {
-			e1.printStackTrace();
+			return false;
 		} catch (DataAccessException e) {
-			e.printStackTrace();
+			return false;
 		}
 	}
 
-	public String searchObj(String busqueda, Field field) {
-		
+	public String searchObj(String fileName, String busqueda, Field field) {
+		try {
+			return DB.searchField(fileName, busqueda, field);
+		} catch (DataReadingException e) {
+			return "Error al buscar";
+		}
 	}
 
-	public String listObj() {
-
+	public String listObj(String fileName) {
+		try {
+			String result = "";
+			for(Data obj : DB.listAll(fileName)) {
+				result += obj.toPrint() + "\n";
+			}
+			
+			return result+"\n";
+			
+		} catch (DataReadingException e) {
+			return "";
+		}
 	}
 
 	public void selectObj(Data obj) {
-
+		selectedObj = obj;
 	}
 
-	public void editObj() {
-
+	public void editObj(Field field, String edition) {
+		if(selectedObj instanceof Animal) {
+			((Animal)selectedObj);
+		}
 	}
 
-	public String getDataInfo(Data obj) {
-
+	public String getObjInfo(Data obj) {
+		return selectedObject.toPrint();
 	}
 }

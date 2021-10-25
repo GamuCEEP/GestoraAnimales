@@ -16,6 +16,8 @@ public interface Data {
 			throw new DataTypeNotFound(type+" no es un tipo de objeto reconocido");
 		}
 	}
+	
+	public String toPrint();
     
 	
 	public enum Type{
