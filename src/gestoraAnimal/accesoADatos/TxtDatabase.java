@@ -41,7 +41,7 @@ public class TxtDatabase implements IDatabase {
 			salida.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace(System.err);
-			throw new DataWrittingException("No se encontró el archivo");
+			throw new DataWrittingException("No se encontrï¿½ el archivo");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			throw new DataWrittingException("Error al escribir en el archivo");
@@ -64,7 +64,7 @@ public class TxtDatabase implements IDatabase {
 			entrada.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			throw new DataReadingException("No se encontró el archivo");
+			throw new DataReadingException("No se encontrï¿½ el archivo");
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new DataReadingException("Error al leer el archivo");
@@ -87,7 +87,7 @@ public class TxtDatabase implements IDatabase {
 			entrada.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			throw new DataReadingException("No se encontró el archivo");
+			throw new DataReadingException("No se encontrï¿½ el archivo");
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new DataReadingException("Error al leer el archivo");
@@ -108,7 +108,7 @@ public class TxtDatabase implements IDatabase {
 			entrada.close();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
-			throw new DataReadingException("No se encontró el archivo");
+			throw new DataReadingException("No se encontrÃ³ el archivo");
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new DataReadingException("Error al leer el archivo");
@@ -144,7 +144,7 @@ public class TxtDatabase implements IDatabase {
 			temp.renameTo(file);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace(System.err);
-			throw new DataAccessException("No se encontró el archivo");
+			throw new DataAccessException("No se encontrï¿½ el archivo");
 		} catch (IOException e) {
 			e.printStackTrace(System.err);
 			throw new DataAccessException("Error al escribir en el archivo");

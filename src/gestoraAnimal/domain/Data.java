@@ -7,7 +7,7 @@ public interface Data {
     public static Data createData(String data) throws DataTypeNotFound {
         String[] temp = data.split(";", 1);
         Data.Type type = Data.Type.valueOf(temp[0]);
-        String objData = temp[1];
+        String[] objData = temp[1].split(";");
         switch (type) {
             case Animal:
                 return new Animal(objData);
@@ -21,9 +21,9 @@ public interface Data {
     public enum Type {
         Animal(gestoraAnimal.domain.Animal.class);
 
-        public Class clazz;
+        public Class<?> clazz;
 
-        private Type(Class clazz) {
+        private Type(Class<?> clazz) {
             this.clazz = clazz;
         }
     }

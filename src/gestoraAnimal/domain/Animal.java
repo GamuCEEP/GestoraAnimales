@@ -27,11 +27,22 @@ public class Animal implements Data {
         this.price = price;
     }
 
-    public Animal(String... data) {
+    public Animal(String[] data) {
         this.name = data[fields.name.ordinal()];
         this.kind = AnimalKind.valueOf(data[fields.kind.ordinal()]);
         this.age = Integer.parseInt(data[fields.age.ordinal()]);
         this.price = Float.parseFloat(data[fields.price.ordinal()]);
+    }
+    public Animal(Object[] data) {
+    	
+    	
+    	for(int i = 0; i< this.getClass().getDeclaredFields().length; i++) {
+    		try {
+    			this.getClass().getDeclaredFields()[i].set(this, data[i]);
+    		} catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
+    			e.printStackTrace();
+    		}
+    	}
     }
 
     public void changeField(Field field, String edition) {

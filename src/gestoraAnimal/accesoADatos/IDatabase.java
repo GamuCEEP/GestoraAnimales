@@ -10,7 +10,7 @@ public interface IDatabase {
 	/**
 	 * Crea un archivo con el nombre dado
 	 * 
-	 * @param fileName el nombre del archivo que se creará
+	 * @param fileName el nombre del archivo que se crearï¿½
 	 * @throws DataAccessException
 	 */
 	public void createFile(String fileName) throws DataAccessException;
@@ -51,21 +51,21 @@ public interface IDatabase {
 	public int search(String fileName, String search) throws DataReadingException;
 
 	/**
-	 * Busca en el archivo el texto dado según el campo a buscar
+	 * Busca en el archivo el texto dado segï¿½n el campo a buscar
 	 * 
 	 * @param fileName el nombre del archivo en el que buscar
-	 * @param search   el texto con el que comparará
-	 * @param field    el campo que se está buscando
-	 * @return un String con la linea en la que encontró la busqueda
+	 * @param search   el texto con el que compararï¿½
+	 * @param field    el campo que se estï¿½ buscando
+	 * @return un String con la linea en la que encontrï¿½ la busqueda
 	 * @throws DataReadingException
 	 */
 	public String searchField(String fileName, String search, Field field) throws DataReadingException;
 
 	/**
-	 * Recoge toda la información del archivo
+	 * Recoge toda la informaciï¿½n del archivo
 	 * 
 	 * @param fileName el archivo de donde coger los datos
-	 * @return una lista con toda la información del archivo convertida en objetos
+	 * @return una lista con toda la informaciï¿½n del archivo convertida en objetos
 	 *         Data
 	 * @throws DataReadingException
 	 */
