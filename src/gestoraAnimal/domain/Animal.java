@@ -4,8 +4,8 @@ public class Animal implements Data {
 
     private String name;
     private AnimalKind kind;
-    private int age;
-    private float price;
+    private Integer age;
+    private Float price;
 
     public enum fields implements Field {
         type,

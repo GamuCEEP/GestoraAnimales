@@ -1,13 +1,17 @@
 package gestoraAnimal.view;
 
+import gestoraAnimal.domain.*;
 import gestoraAnimal.negocio.AppController;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.util.Scanner;
 
 public class ConsoleView {
 
-    private Scanner input = new Scanner(System.in);
-    private AppController AC;
-    private String[] options = {
+    private final Scanner input = new Scanner(System.in);
+    private final AppController AC;
+    private final String exit = "0";
+    private final String[] options = {
         "Añadir datos",
         "Quitar datos",
         "Buscar dato",
@@ -16,15 +20,15 @@ public class ConsoleView {
         "Editar dato",
         "Ver dato"
     };
-    
-    public ConsoleView(AppController AC){
+
+    public ConsoleView(AppController AC) {
         this.AC = AC;
     }
 
     public void showMenu() {
         int i = 1;
         for (String option : options) {
-            System.out.println(i + " - " + option);
+            System.out.println(i++ + " - " + option);
         }
         System.out.println("0 - Salir");
     }
@@ -35,14 +39,18 @@ public class ConsoleView {
         while (true) {
             try {
                 opt = Integer.parseInt(option);
-                if (opt >= 0 && opt <= options.length) return opt;                
-                
-                System.out.println("Por favor introduce un numero entre 0 y "+options.length);
+                if (opt >= 0 && opt <= options.length) {
+                    return opt;
+                }
+
+                System.out.println("Por favor introduce un numero entre 0 y " + options.length);
             } catch (NumberFormatException e) {
                 System.out.println("Por favor introduce un numero valido");
             }
         }
-    } /*
+    }
+
+    /*
     añadir datos 
     quitar datos 
     buscar datos 
@@ -51,12 +59,12 @@ public class ConsoleView {
     dato editar
     dato seleccionado
      */
-    public void menu(){
+    public void menu() {
         showMenu();
-        switch(getOption()){
+        switch (getOption()) {
             case 0:
                 return;
-            case 1: 
+            case 1:
                 addData();
                 break;
             case 2:
@@ -76,15 +84,82 @@ public class ConsoleView {
                 break;
             case 7:
                 showData();
-                break; 
+                break;
         }
     }
 
+    private Class getDataType() {
+        Class dataType;
+        System.out.println("¿Que tipo de dato quieres añadir?");
+        while (true) {
+            String inputText = input.nextLine();
+            if (inputText.equalsIgnoreCase(exit)) {
+                return null;
+            }
+            try {
+                dataType = Data.Type.valueOf(inputText).clazz;
+                break;
+            } catch (IllegalArgumentException e) {
+                System.out.println("No se encontró el tipo introducido");
+            }
+        }
+        return dataType;
+    }
+
+    private String[] getParams(Class dataType) {
+        Field[] fields = dataType.getDeclaredFields();
+        String[] fieldsText = new String[fields.length];
+        for (int i = 0; i < fields.length; i++) {
+            System.out.println("Introduce " + fields[i].getName() + ": ");
+            String inp = input.nextLine();
+            try {
+                if(fields[i].getType().isEnum()){
+                    Enum.valueOf(AnimalKind.class, inp);
+                    System.out.println("Es un enum");
+                }else if(fields[i].getType() Number.class){
+                    fields[i].getType().cast(inp);
+                }
+                if(){
+                    
+                }
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+                System.out.println("El dato no es valido "+fields[i].getType().getTypeName());
+                i--;
+            } catch (IllegalArgumentException e){
+                System.out.println("El tipo no se encontró");
+                i--;
+            }
+        }
+        return fieldsText;
+    }
+
+    private String getFileName() {
+        System.out.println("¿Donde lo quieres guardar?");
+        return input.nextLine();
+    }
+
+    private boolean checkInputs(String... inputs) {
+        System.out.println("Los datos introducidos son: ");
+        for (String input : inputs) {
+            System.out.println(input);
+        }
+        System.out.println("¿Quiere continuar? (Si / No");
+        String inp = input.nextLine();
+        return inp.equalsIgnoreCase("si");
+    }
+
     private void addData() {
-        
-        System.out.println("");
-        
-        AC.addObj(obj, fileName);
+        Class dataType = getDataType();
+        String fileName = getFileName();
+        String[] params = getParams(dataType);
+
+        if (checkInputs(dataType.getName(), fileName, params.toString())) {
+            try {
+                AC.addObj((Data) dataType.getDeclaredConstructor(String.class).newInstance(params), fileName);
+            } catch (NoSuchMethodException | SecurityException | InstantiationException | IllegalAccessException | IllegalArgumentException | InvocationTargetException ex) {
+            }
+        }
     }
 
     private void removeData() {
