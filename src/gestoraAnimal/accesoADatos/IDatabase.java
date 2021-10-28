@@ -59,7 +59,7 @@ public interface IDatabase {
 	 * @return un String con la linea en la que encontr� la busqueda
 	 * @throws DataReadingException
 	 */
-	public String searchField(String fileName, String search, Field field) throws DataReadingException;
+	public String searchField(String fileName, String search, DataField field) throws DataReadingException;
 
 	/**
 	 * Recoge toda la informaci�n del archivo

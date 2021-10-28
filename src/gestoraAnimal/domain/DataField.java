@@ -1,6 +1,6 @@
 
 package gestoraAnimal.domain;
 
-public interface Field {
+public interface DataField {
 	public int getIndex();
 }

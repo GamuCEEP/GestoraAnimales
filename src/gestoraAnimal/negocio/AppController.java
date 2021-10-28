@@ -51,7 +51,7 @@ public class AppController {
         }
     }
 
-    public String searchObj(String fileName, String busqueda, Field field) {
+    public String searchObj(String fileName, String busqueda, DataField field) {
         try {
             return DB.searchField(fileName, busqueda, field);
         } catch (DataReadingException e) {
@@ -77,7 +77,7 @@ public class AppController {
         selectedObj = obj;
     }
 
-    public void editObj(Field field, String edition) {
+    public void edit (DataField field, String edition) {
         if (selectedObj instanceof Animal) {
             ((Animal)selectedObj).changeField(field, edition);
         }

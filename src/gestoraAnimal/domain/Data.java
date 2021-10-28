@@ -5,7 +5,7 @@ import gestoraAnimal.exceptions.DataTypeNotFound;
 public interface Data {
 
     public static Data createData(String data) throws DataTypeNotFound {
-        String[] temp = data.split(";", 1);
+        String[] temp = data.split(";", 2);
         Data.Type type = Data.Type.valueOf(temp[0]);
         String[] objData = temp[1].split(";");
         switch (type) {

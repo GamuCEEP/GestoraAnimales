@@ -10,6 +10,10 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Wrapper;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class Test {
@@ -18,20 +22,22 @@ public class Test {
         AppController AC = new AppController();
         ConsoleView CV = new ConsoleView(AC);
         
-        String params = CV.getParams(Animal.class);
+        //CV.menu();
+       
+        Patata a = new Patata();
         
+        String in = "a";
+        Field[] fields = a.getClass().getDeclaredFields();
         
-        System.out.println(params);
-        Data a = null;
-        try {
-			a = Data.createData("Animal;"+params);
-		} catch (DataTypeNotFound e) {
-			e.printStackTrace();
-		}
-        a.toPrint();
-        
-        //System.out.println(intclass.getSuperclass().getName().equals(Number.class.getName()));
-        //System.out.println(intclass.getSuperclass().getName()+" / "+Number.class.getName());
+        for(Field field : fields){
+            if(field.getType().isEnum()){
+                for(Object ob : field.getType().getEnumConstants()){
+                    field.getType().cast(ob);
+                    System.out.println(field.getType());
+                }
+                
+            }
+        }
         
     }
 }

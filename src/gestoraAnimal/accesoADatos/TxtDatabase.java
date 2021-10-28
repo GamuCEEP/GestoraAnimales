@@ -72,7 +72,7 @@ public class TxtDatabase implements IDatabase {
 		return line;
 	}
 	@Override
-	public String searchField(String fileName, String search, Field field) throws DataReadingException {
+	public String searchField(String fileName, String search, DataField field) throws DataReadingException {
 		File file = new File(fileName);
 		int line = -1;
 		try {
