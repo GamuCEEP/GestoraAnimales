@@ -5,10 +5,11 @@ import gestoraAnimal.domain.*;
 import gestoraAnimal.exceptions.DataAccessException;
 import gestoraAnimal.exceptions.DataReadingException;
 import gestoraAnimal.exceptions.DataWrittingException;
+import java.util.List;
 
 public class AppController {
 
-    private Data selectedObj;
+    private Animal selectedObj;
 
     private final IDatabase DB = new TxtDatabase();
 
@@ -38,7 +39,7 @@ public class AppController {
         return true;
     }
 
-    public boolean removeObj(Data obj, String fileName) {
+    public boolean removeObj(Animal obj, String fileName) {
         int index;
         try {
             index = DB.search(fileName, obj.toString());
@@ -51,39 +52,46 @@ public class AppController {
         }
     }
 
-    public String searchObj(String fileName, String busqueda, DataField field) {
+    public String searchObj(String fileName, String busqueda) {
         try {
-            return DB.searchField(fileName, busqueda, field);
+            return ""+DB.search(fileName, busqueda);
         } catch (DataReadingException e) {
             return "Error al buscar";
         }
     }
 
-    public String listObj(String fileName) {
+    public List<Data> listObj(String fileName) {
         try {
-            String result = "";
-            for (Data obj : DB.listAll(fileName)) {
-                result += obj.toPrint() + "\n";
-            }
-
-            return result + "\n";
-
+            return DB.listAll(fileName);
         } catch (DataReadingException e) {
-            return "";
+            return null;
         }
     }
 
     public void selectObj(Data obj) {
-        selectedObj = obj;
+        selectedObj = (Animal)obj;
     }
 
-    public void edit (DataField field, String edition) {
-        if (selectedObj instanceof Animal) {
-            ((Animal)selectedObj).changeField(field, edition);
+    public void edit (Animal.fields campo, String edition) {
+        switch(campo) {
+            case name:
+                selectedObj.setName(edition);
+                break;
+            case kind:
+                selectedObj.setKind(AnimalKind.valueOf(edition));
+                break;
+            case age:
+                selectedObj.setAge(Integer.parseInt(edition));
+                break;
+            case price:
+                selectedObj.setPrecio(Float.parseFloat(edition));
+                break;
+            default:
+                
         }
     }
 
-    public String getObjInfo(Data obj) {
+    public String getObjInfo() {
         return selectedObj.toPrint();
     }
 }

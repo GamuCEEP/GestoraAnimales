@@ -2,7 +2,5 @@
 package gestoraAnimal.domain;
 
 public enum AnimalKind {
-    Gato, Perro, Mapache, Pato
-    
-    
+    Gato, Perro, Mapache, Pato;
 }

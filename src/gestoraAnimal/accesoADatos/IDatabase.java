@@ -51,17 +51,6 @@ public interface IDatabase {
 	public int search(String fileName, String search) throws DataReadingException;
 
 	/**
-	 * Busca en el archivo el texto dado seg�n el campo a buscar
-	 * 
-	 * @param fileName el nombre del archivo en el que buscar
-	 * @param search   el texto con el que comparar�
-	 * @param field    el campo que se est� buscando
-	 * @return un String con la linea en la que encontr� la busqueda
-	 * @throws DataReadingException
-	 */
-	public String searchField(String fileName, String search, DataField field) throws DataReadingException;
-
-	/**
 	 * Recoge toda la informaci�n del archivo
 	 * 
 	 * @param fileName el archivo de donde coger los datos

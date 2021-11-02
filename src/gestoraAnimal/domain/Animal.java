@@ -1,6 +1,5 @@
 package gestoraAnimal.domain;
 
-import java.lang.reflect.Field;
 
 public class Animal implements Data {
 
@@ -98,7 +97,7 @@ public class Animal implements Data {
 
     @Override
     public String toString() {
-        return this.getClass().getSimpleName() + ";" + this.name + ";" + this.kind + ";" + this.age + ";" + this.price;
+        return this.name + ";" + this.kind + ";" + this.age + ";" + this.price;
     }
 
     public String toPrint() {

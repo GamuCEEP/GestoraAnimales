@@ -1,0 +1,2 @@
+Oscar;Gato;4;2300.0
+Oscar;Gato;7;32.0

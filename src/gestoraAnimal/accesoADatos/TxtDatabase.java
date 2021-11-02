@@ -52,6 +52,7 @@ public class TxtDatabase implements IDatabase {
 	public int search(String fileName, String search) throws DataReadingException {
 		File file = new File(fileName);
 		int line = -1;
+                
 		try {
 			BufferedReader entrada = new BufferedReader(new FileReader(file));
 			String reading;
@@ -60,6 +61,7 @@ public class TxtDatabase implements IDatabase {
 					entrada.close();
 					return line;
 				}
+                                line++;
 			}
 			entrada.close();
 		} catch (FileNotFoundException e) {
@@ -71,30 +73,7 @@ public class TxtDatabase implements IDatabase {
 		}
 		return line;
 	}
-	@Override
-	public String searchField(String fileName, String search, DataField field) throws DataReadingException {
-		File file = new File(fileName);
-		int line = -1;
-		try {
-			BufferedReader entrada = new BufferedReader(new FileReader(file));
-			String reading;
-			while ((reading = entrada.readLine()) != null) {
-				if (reading.split(";")[field.getIndex()].equalsIgnoreCase(search)) {
-					entrada.close();
-					return "Found on line " + line;
-				}
-			}
-			entrada.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-			throw new DataReadingException("No se encontr� el archivo");
-		} catch (IOException e) {
-			e.printStackTrace();
-			throw new DataReadingException("Error al leer el archivo");
-		}
-		return "Not found";
-	}
-
+	
 	@Override
 	public List<Data> listAll(String fileName) throws DataReadingException {
 		File file = new File(fileName);
@@ -103,7 +82,7 @@ public class TxtDatabase implements IDatabase {
 			BufferedReader entrada = new BufferedReader(new FileReader(file));
 			String reading;
 			while ((reading = entrada.readLine()) != null) {
-				list.add(Data.createData(reading));
+				list.add(new Animal(reading.split(";")));
 			}
 			entrada.close();
 		} catch (FileNotFoundException e) {
@@ -112,8 +91,6 @@ public class TxtDatabase implements IDatabase {
 		} catch (IOException e) {
 			e.printStackTrace();
 			throw new DataReadingException("Error al leer el archivo");
-		} catch (DataTypeNotFound e) {
-			e.printStackTrace();
 		}
 		return list;
 	}
@@ -128,6 +105,7 @@ public class TxtDatabase implements IDatabase {
 	public void remove(String fileName, int index) throws DataAccessException {
 		File file = new File(fileName);
 		File temp = new File("temp");
+                System.out.println(index);
 		try {
 			BufferedReader entrada = new BufferedReader(new FileReader(file));
 			PrintWriter salida = new PrintWriter(new FileWriter(temp, true));

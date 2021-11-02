@@ -1,15 +1,13 @@
 package gestoraAnimal.view;
 
 import gestoraAnimal.domain.*;
-import gestoraAnimal.exceptions.DataTypeNotFound;
 import gestoraAnimal.negocio.AppController;
 import java.lang.reflect.Field;
 import java.util.HashSet;
-import java.util.InputMismatchException;
+import java.util.List;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 
 public class ConsoleView {
 
@@ -99,98 +97,189 @@ public class ConsoleView {
         }
     }
 
-    private Class<? extends Data> getDataType() {
-        Class<? extends Data> dataType;
-        System.out.println("¿Que tipo de dato quieres añadir?");
-        while (true) {
-            String inputText = input.nextLine();
-            if (inputText.equalsIgnoreCase(exit)) {
-                return null;
-            }
-            try {
-                dataType = (Class<? extends Data>) Data.Type.valueOf(inputText).clazz;
-                break;
-            } catch (IllegalArgumentException e) {
-                System.out.println("No se encontró el tipo introducido");
-            }
-        }
-        return dataType;
-    }
-
-    public String getParams(Class<?> dataType) {
-        Field[] fields = dataType.getDeclaredFields();
-        StringBuilder text = new StringBuilder(dataType.getSimpleName() + ";");
-
-        for (int i = 0; i < fields.length; i++) {
-            Field field = fields[i];
-            if (isNumber(field)) {
-                System.out.println("Introduce " + field.getName() + " (número) : ");
-                double inp = 0;
-                try {
-                    inp = input.nextDouble();
-                    input.nextLine();
-                } catch (InputMismatchException e) {
-                    input.nextLine();
-                    System.out.println("Por favor introduce un número");
-                    i--;
-                    continue;
-                }
-                text.append(inp).append(";");
-            } else if (field.getType().isEnum()) {
-                //TODO - en el caso de que sea un Enum, comprobar que este enum tiene el dat introducidos
-            } else {
-                System.out.println("Introduce " + field.getName() + ": ");
-                String inp = input.nextLine();
-                text.append(inp).append(";");
-            }
-        }
-        return text.toString();
-    }
-
-    private String getFileName() {
-        System.out.println("¿Donde lo quieres guardar?");
+    private String getText(String msg) {
+        System.out.println(msg);
         return input.nextLine();
     }
 
-    private boolean confirmInputs(String... inputs) {
-        System.out.println("Los datos introducidos son: ");
-        for (String input : inputs) {
-            System.out.println(input);
-        }
-        System.out.println("¿Quiere continuar? (Si / No)");
-        String inp = input.nextLine();
-        return inp.equalsIgnoreCase("si");
-    }
-
-    private void addData() {
-        Class<?> dataType = getDataType();
-        String fileName = getFileName();
-        String params = getParams(dataType);
-
-        if (confirmInputs(dataType.getName(), fileName, params)) {
+    /*
+    
+    private String name;
+    private AnimalKind kind;
+    private Integer age;
+    private Float price;*/
+    private AnimalKind getAnimalKind() {
+        while (true) {
             try {
-                AC.addObj(Data.createData(params), fileName);
-            } catch (SecurityException | IllegalArgumentException | DataTypeNotFound ex) {
-                ex.printStackTrace();
+                int option = Integer.parseInt(input.nextLine());
+                return AnimalKind.values()[option];
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Por favor introduce un número entre 0 y " + (AnimalKind.values().length - 1));
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
             }
         }
     }
 
+    private String getName(AnimalKind kind) {
+        System.out.println("¿Cual es el nombre del " + kind + "?");
+        return input.nextLine();
+    }
+    private String getName() {
+        System.out.println("¿Cual es el nombre?");
+        return input.nextLine();
+    }
+
+    private int getAge() {
+        while (true) {
+            try {
+                System.out.println("¿Cual es la edad de tu animal?");
+                return Integer.parseInt(input.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
+            }
+        }
+    }
+    private float getPrice(){
+        while (true) {
+            try {
+                System.out.println("¿Cual es el precio de tu animal?");
+                return Float.parseFloat(input.nextLine());
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
+            }
+        }
+    }
+
+    private void addData() {
+
+        AnimalKind kind;
+        String name;
+        int age;
+        float price;
+
+        System.out.println("¿Que animal quieres guardar?");
+        for (int i = 0; i < AnimalKind.values().length; i++) {
+            System.out.println(i + " - " + AnimalKind.values()[i]);
+        }
+
+        kind = getAnimalKind();
+        name = getName(kind);
+        age = getAge();
+        price = getPrice();
+        
+        AC.addObj(new Animal(name, kind, age, price), getText("¿Donde quieres guardarlo?"));
+
+    }
+
     private void removeData() {
+        String file = getText("¿De donde quieres quitar un animal?");
+        List<Data> entries = AC.listObj(file);
+        if(entries.size() == 0){
+            System.out.println("Esta vacio");
+            return;
+        }
+        for(int i = 0; i < entries.size(); i++ ){
+            System.out.println(i+" - "+entries.get(i));
+        }
+        
+        while (true) {
+            try {
+                int option = Integer.parseInt(input.nextLine());
+                AC.removeObj((Animal)entries.get(option),file);
+                return;
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Por favor introduce un número entre 0 y " + (entries.size()));
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
+            }
+        }
+        
     }
 
     private void searchData() {
+        String file = getText("¿Donde quieres buscar un animal?");
+        String busqueda = getText("¿Que quieres buscar?");
+        System.out.println(AC.searchObj(file, busqueda));
     }
 
     private void listData() {
+        String file = getText("¿De donde quieres listar los animales?");
+        List<Data> entries = AC.listObj(file);
+        
+        for(int i = 0; i < entries.size(); i++ ){
+            System.out.println(i+" - "+entries.get(i));
+        }
     }
 
     private void selectData() {
+        String file = getText("¿De donde quieres seleccionar un animal?");
+        List<Data> entries = AC.listObj(file);
+        
+        for(int i = 0; i < entries.size(); i++ ){
+            System.out.println(i+" - "+entries.get(i));
+        }
+        
+        while (true) {
+            try {
+                int option = Integer.parseInt(input.nextLine());
+                AC.selectObj(entries.get(option));
+                return;
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Por favor introduce un número entre 0 y " + (entries.size() - 1));
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
+            }
+        }
     }
 
     private void editData() {
+        
+        for(int i = 0; i < Animal.fields.values().length; i++){
+            System.out.println(i+" - "+Animal.fields.values()[i]);
+            
+        }
+        /*
+    
+    name,
+        kind,
+        age,
+        price;
+    */  
+        while (true) {
+            try {
+                int option = Integer.parseInt(input.nextLine());
+                String edicion = "";
+                switch(option){
+                    case 0:
+                        edicion = getName();
+                        break;
+                    case 1:
+                        edicion = ""+getAnimalKind();
+                        break;
+                    case 2:
+                        edicion = ""+getAge();
+                        break;
+                    case 3:
+                        edicion = ""+getPrice();
+                        break;
+                }
+                
+                AC.edit(Animal.fields.values()[option],edicion);
+                return;
+                
+            } catch (IndexOutOfBoundsException e) {
+                System.out.println("Por favor introduce un número entre 0 y " + (Animal.fields.values().length - 1));
+            } catch (NumberFormatException e) {
+                System.out.println("Por favor introduce un número");
+            }
+        }
+        
+        
+        
     }
 
     private void showData() {
+        System.out.println(AC.getObjInfo());
     }
 }
