@@ -9,10 +9,10 @@ public class Animal implements Data {
     private Float price;
 
     public enum fields implements DataField {
-        name,
-        kind,
-        age,
-        price;
+        nombre,
+        tipo,
+        edad,
+        precio;
 
         @Override
         public int getIndex() {
@@ -28,40 +28,12 @@ public class Animal implements Data {
     }
 
     public Animal(String[] data) {
-        this.name = data[fields.name.ordinal()];
-        this.kind = AnimalKind.valueOf(data[fields.kind.ordinal()]);
-        this.age = (int) Double.parseDouble(data[fields.age.ordinal()]);
-        this.price = Float.parseFloat(data[fields.price.ordinal()]);
+        this.name = data[fields.nombre.ordinal()];
+        this.kind = AnimalKind.valueOf(data[fields.tipo.ordinal()]);
+        this.age = (int) Double.parseDouble(data[fields.edad.ordinal()]);
+        this.price = Float.parseFloat(data[fields.precio.ordinal()]);
     }
 
-    public Animal(Object[] data) {
-
-        for (int i = 0; i < this.getClass().getDeclaredFields().length; i++) {
-            try {
-                this.getClass().getDeclaredFields()[i].set(this, data[i]);
-            } catch (IllegalArgumentException | IllegalAccessException | SecurityException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-    public void changeField(DataField field, String edition) {
-        switch ((fields) field) {
-            case name:
-                this.name = edition;
-                break;
-            case kind:
-                this.kind = AnimalKind.valueOf(edition);
-                break;
-            case age:
-                this.age = Integer.parseInt(edition);
-                break;
-            case price:
-                this.price = Float.parseFloat(edition);
-                break;
-            default:
-        }
-    }
 
     public String getName() {
         return name;
@@ -100,12 +72,13 @@ public class Animal implements Data {
         return this.name + ";" + this.kind + ";" + this.age + ";" + this.price;
     }
 
+    @Override
     public String toPrint() {
         StringBuilder sb = new StringBuilder();
         sb.append("Nombre: ").append(this.name);
-        sb.append("Tipo: ").append(this.kind);
-        sb.append("Edad: ").append(this.age);
-        sb.append("Precio: ").append(this.price);
+        sb.append("\nTipo: ").append(this.kind);
+        sb.append("\nEdad: ").append(this.age);
+        sb.append("\nPrecio: ").append(this.price);
         return sb.toString();
     }
 

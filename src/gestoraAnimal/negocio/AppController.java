@@ -5,7 +5,11 @@ import gestoraAnimal.domain.*;
 import gestoraAnimal.exceptions.DataAccessException;
 import gestoraAnimal.exceptions.DataReadingException;
 import gestoraAnimal.exceptions.DataWrittingException;
+import gestoraAnimal.exceptions.NoSelectedObjectException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class AppController {
 
@@ -64,7 +68,7 @@ public class AppController {
         try {
             return DB.listAll(fileName);
         } catch (DataReadingException e) {
-            return null;
+            return new ArrayList<>();
         }
     }
 
@@ -72,26 +76,38 @@ public class AppController {
         selectedObj = (Animal)obj;
     }
 
-    public void edit (Animal.fields campo, String edition) {
+    public void edit (Animal.fields campo, String edition, String filename){
+        
+        Data original = new Animal(selectedObj.toString().split(";"));
         switch(campo) {
-            case name:
+            case nombre:
                 selectedObj.setName(edition);
                 break;
-            case kind:
+            case tipo:
                 selectedObj.setKind(AnimalKind.valueOf(edition));
                 break;
-            case age:
+            case edad:
                 selectedObj.setAge(Integer.parseInt(edition));
                 break;
-            case price:
+            case precio:
                 selectedObj.setPrecio(Float.parseFloat(edition));
                 break;
-            default:
-                
+        }
+        try {
+            DB.modify(filename, original, selectedObj);
+        } catch (DataWrittingException ex) {
+        } catch (DataAccessException ex) {
         }
     }
 
-    public String getObjInfo() {
+    public String getObjInfo(){
         return selectedObj.toPrint();
+    }
+    public String getSelectedObjName(){
+        if (selectedObjExists()) return selectedObj.getName();
+        return "Ninguno";
+    }
+    public boolean selectedObjExists(){
+        return selectedObj != null;
     }
 }

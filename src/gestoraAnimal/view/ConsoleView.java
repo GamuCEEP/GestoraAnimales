@@ -2,63 +2,39 @@ package gestoraAnimal.view;
 
 import gestoraAnimal.domain.*;
 import gestoraAnimal.negocio.AppController;
-import java.lang.reflect.Field;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Scanner;
-import java.util.Set;
-
 
 public class ConsoleView {
 
     private final Scanner input = new Scanner(System.in);
     private final AppController AC;
     private final String exit = "0";
+    private String selectedFile = "";
     private final String[] options = {"Añadir datos", "Quitar datos", "Buscar dato", "Listar Datos",
-        "Seleccionar dato", "Editar dato", "Ver dato"};
+        "Seleccionar dato", "Editar dato seleccionado", "Ver dato seleccionado"};
 
-    private Set<Class<?>> numberType = new HashSet<>();
 
     public ConsoleView(AppController AC) {
         this.AC = AC;
-        loadNumberTypes();
-    }
-
-    private void loadNumberTypes() {
-        numberType.add(byte.class);
-        numberType.add(short.class);
-        numberType.add(int.class);
-        numberType.add(long.class);
-        numberType.add(float.class);
-        numberType.add(double.class);
-        numberType.add(Byte.class);
-        numberType.add(Short.class);
-        numberType.add(Integer.class);
-        numberType.add(Long.class);
-        numberType.add(Float.class);
-        numberType.add(Double.class);
-    }
-
-    private boolean isNumber(Field field) {
-        return numberType.contains(field.getType());
     }
 
     public void showMenu() {
         int i = 1;
+        System.out.println("\n__________________________");
         for (String option : options) {
             System.out.println(i++ + " - " + option);
         }
         System.out.println("0 - Salir");
+        System.out.println("______Dato seleccionado: "+AC.getSelectedObjName());
     }
 
     public int getOption() {
-        String option = input.nextLine();
-        int opt;
         while (true) {
             try {
-                opt = Integer.parseInt(option);
-                if (opt >= 0 && opt <= options.length) {
-                    return opt;
+                int option = Integer.parseInt(input.nextLine());
+                if (option >= 0 && option <= options.length) {
+                    return option;
                 }
                 System.out.println("Por favor introduce un numero entre 0 y " + options.length);
             } catch (NumberFormatException e) {
@@ -68,6 +44,7 @@ public class ConsoleView {
     }
 
     public void menu() {
+        while(true){
         showMenu();
         switch (getOption()) {
             case 0:
@@ -95,6 +72,18 @@ public class ConsoleView {
                 showData();
                 break;
         }
+        }
+    }
+    private List<Data> listData(String filename){
+        List<Data> entries = AC.listObj(filename);
+        if (entries.isEmpty()) {
+            System.out.println("Esta vacio");
+            return entries;
+        }
+        for (int i = 0; i < entries.size(); i++) {
+            System.out.println(i+1 + " : " + entries.get(i).getName());
+        }
+        return entries;
     }
 
     private String getText(String msg) {
@@ -102,12 +91,6 @@ public class ConsoleView {
         return input.nextLine();
     }
 
-    /*
-    
-    private String name;
-    private AnimalKind kind;
-    private Integer age;
-    private Float price;*/
     private AnimalKind getAnimalKind() {
         while (true) {
             try {
@@ -125,6 +108,7 @@ public class ConsoleView {
         System.out.println("¿Cual es el nombre del " + kind + "?");
         return input.nextLine();
     }
+
     private String getName() {
         System.out.println("¿Cual es el nombre?");
         return input.nextLine();
@@ -140,7 +124,8 @@ public class ConsoleView {
             }
         }
     }
-    private float getPrice(){
+
+    private float getPrice() {
         while (true) {
             try {
                 System.out.println("¿Cual es el precio de tu animal?");
@@ -167,26 +152,19 @@ public class ConsoleView {
         name = getName(kind);
         age = getAge();
         price = getPrice();
-        
+
         AC.addObj(new Animal(name, kind, age, price), getText("¿Donde quieres guardarlo?"));
 
     }
 
     private void removeData() {
         String file = getText("¿De donde quieres quitar un animal?");
-        List<Data> entries = AC.listObj(file);
-        if(entries.size() == 0){
-            System.out.println("Esta vacio");
-            return;
-        }
-        for(int i = 0; i < entries.size(); i++ ){
-            System.out.println(i+" - "+entries.get(i));
-        }
-        
+        List<Data> entries = listData(file);
+
         while (true) {
             try {
                 int option = Integer.parseInt(input.nextLine());
-                AC.removeObj((Animal)entries.get(option),file);
+                AC.removeObj((Animal) entries.get(option-1), file);
                 return;
             } catch (IndexOutOfBoundsException e) {
                 System.out.println("Por favor introduce un número entre 0 y " + (entries.size()));
@@ -194,7 +172,7 @@ public class ConsoleView {
                 System.out.println("Por favor introduce un número");
             }
         }
-        
+
     }
 
     private void searchData() {
@@ -205,28 +183,22 @@ public class ConsoleView {
 
     private void listData() {
         String file = getText("¿De donde quieres listar los animales?");
-        List<Data> entries = AC.listObj(file);
-        
-        for(int i = 0; i < entries.size(); i++ ){
-            System.out.println(i+" - "+entries.get(i));
-        }
+        listData(file);
     }
+    
 
     private void selectData() {
         String file = getText("¿De donde quieres seleccionar un animal?");
-        List<Data> entries = AC.listObj(file);
-        
-        for(int i = 0; i < entries.size(); i++ ){
-            System.out.println(i+" - "+entries.get(i));
-        }
-        
+        List<Data> entries = listData(file);
+        selectedFile = file;
+
         while (true) {
             try {
                 int option = Integer.parseInt(input.nextLine());
-                AC.selectObj(entries.get(option));
+                AC.selectObj(entries.get(option-1));
                 return;
             } catch (IndexOutOfBoundsException e) {
-                System.out.println("Por favor introduce un número entre 0 y " + (entries.size() - 1));
+                System.out.println("Por favor introduce un número entre 1 y " + (entries.size()));
             } catch (NumberFormatException e) {
                 System.out.println("Por favor introduce un número");
             }
@@ -234,52 +206,48 @@ public class ConsoleView {
     }
 
     private void editData() {
-        
-        for(int i = 0; i < Animal.fields.values().length; i++){
-            System.out.println(i+" - "+Animal.fields.values()[i]);
-            
+        if(!AC.selectedObjExists()) selectData();
+        System.out.println("¿Que campo quieres modificar?");
+        for (int i = 0; i < Animal.fields.values().length; i++) {
+            System.out.println(i+1 + " - " + Animal.fields.values()[i]);
         }
-        /*
-    
-    name,
-        kind,
-        age,
-        price;
-    */  
+        int option;
         while (true) {
             try {
-                int option = Integer.parseInt(input.nextLine());
+                option = Integer.parseInt(input.nextLine());
                 String edicion = "";
-                switch(option){
-                    case 0:
+                switch (option) {
+                    case 1:
                         edicion = getName();
                         break;
-                    case 1:
-                        edicion = ""+getAnimalKind();
-                        break;
                     case 2:
-                        edicion = ""+getAge();
+                        edicion = "" + getAnimalKind();
                         break;
                     case 3:
-                        edicion = ""+getPrice();
+                        edicion = "" + getAge();
+                        break;
+                    case 4:
+                        edicion = "" + getPrice();
                         break;
                 }
-                
-                AC.edit(Animal.fields.values()[option],edicion);
+                System.out.println(Animal.fields.values()[option-1]);
+                AC.edit(Animal.fields.values()[option-1], edicion, selectedFile);
                 return;
-                
+
             } catch (IndexOutOfBoundsException e) {
-                System.out.println("Por favor introduce un número entre 0 y " + (Animal.fields.values().length - 1));
+                System.out.println("Por favor introduce un número entre 1 y " + (Animal.fields.values().length));
             } catch (NumberFormatException e) {
                 System.out.println("Por favor introduce un número");
             }
         }
-        
-        
-        
+
     }
 
     private void showData() {
+
+        if(!AC.selectedObjExists()) selectData();
         System.out.println(AC.getObjInfo());
+
+        
     }
 }

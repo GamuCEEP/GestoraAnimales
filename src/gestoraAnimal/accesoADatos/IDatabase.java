@@ -35,10 +35,12 @@ public interface IDatabase {
 	 * Borra el objeto Data del archivo pasado
 	 * 
 	 * @param fileName
-	 * @param data
+	 * @param index
 	 * @throws DataAccessException
 	 */
 	public void remove(String fileName, int index) throws DataAccessException;
+        
+        public void modify(String filename, Data original, Data modified) throws DataAccessException;
 
 	/**
 	 * Busca en el archivo el texto dado
